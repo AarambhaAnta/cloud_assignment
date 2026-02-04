@@ -9,6 +9,7 @@ type Config struct {
 	Env  string
 }
 
+// LoadConfig loads config like (PORT, ENV, etc...) from .env or sets it to default val
 func LoadConfig() (*Config, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
