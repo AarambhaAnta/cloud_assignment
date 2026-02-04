@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cloud_assignment/internal/models"
 	"encoding/json"
 	"net/http"
 	"sync"
@@ -9,14 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Task struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-
 var (
-	tasks   = make(map[string]Task)
+	tasks   = make(map[string]models.Task)
 	tasksMu sync.Mutex
 )
 
@@ -28,7 +23,7 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 
 // CreateTask handles POST /tasks - creates a new task
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-	var task Task
+	var task models.Task
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -52,7 +47,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 func ListTasks(w http.ResponseWriter, r *http.Request) {
 	tasksMu.Lock()
 	defer tasksMu.Unlock()
-	var taskList []Task
+	var taskList []models.Task
 	for _, task := range tasks {
 		taskList = append(taskList, task)
 	}
@@ -90,7 +85,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	var updatedTask Task
+	var updatedTask models.Task
 	if err := json.NewDecoder(r.Body).Decode(&updatedTask); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
